@@ -9,12 +9,12 @@
 
 // Uncomment the author block below and fill in your name:
 
-// std::string AUTHOR_NAME       = "Your Name";
-// std::string AUTHOR_AUTHORSHIP = "I acknowledge that I have worked on this "
-// "assignment independently, except where explicitly noted and referenced. "
-// "Any collaboration or use of external resources has been properly cited. "
-// "I am fully aware of the consequences of academic dishonesty and agree "
-// "to abide by the university's academic integrity policy.";
+std::string AUTHOR_NAME       = "Mikayla Iten";
+std::string AUTHOR_AUTHORSHIP = "I acknowledge that I have worked on this "
+"assignment independently, except where explicitly noted and referenced. "
+"Any collaboration or use of external resources has been properly cited. "
+"I am fully aware of the consequences of academic dishonesty and agree "
+"to abide by the university's academic integrity policy.";
 
 // ============================================================
 // PART 1: Class DoubleNode
@@ -23,41 +23,44 @@
 /// Constructor: initialize ALL THREE fields with a member initializer list.
 /// value <- newValue, prevPtr <- nullptr, nextPtr <- nullptr.
 DoubleNode::DoubleNode(NodeValue newValue)
+: value{newValue}, prevPtr{nullptr}, nextPtr{nullptr}
 {
-    // TODO: move the initialization of all three fields into an initializer list
+    // move the initialization of all three fields into an initializer list
 }
 
 /// Const getter: return the stored value.
 NodeValue DoubleNode::getValue() const
 {
     // TODO: return the value field
-    return NodeValue{};
+    return value;
 }
 
 /// Const getter: return the previous node (or nullptr).
 DoubleNode *DoubleNode::getPrev() const
 {
-    // TODO: return the prevPtr field
-    return nullptr;
+    // return the prevPtr field
+    return prevPtr;
 }
 
 /// Const getter: return the next node (or nullptr).
 DoubleNode *DoubleNode::getNext() const
 {
-    // TODO: return the nextPtr field
-    return nullptr;
+    // return the nextPtr field
+    return nextPtr;
 }
 
 /// Setter: store newPrevPtr in prevPtr.
 void DoubleNode::setPrev(DoubleNode *newPrevPtr)
 {
-    // TODO: assign the field
+    // assign the field
+    prevPtr = newPrevPtr;
 }
 
 /// Setter: store newNextPtr in nextPtr.
 void DoubleNode::setNext(DoubleNode *newNextPtr)
 {
-    // TODO: assign the field
+    // assign the field
+    nextPtr = newNextPtr;
 }
 
 // ============================================================
@@ -66,14 +69,30 @@ void DoubleNode::setNext(DoubleNode *newNextPtr)
 
 /// Empty list: headPtr = nullptr, tailPtr = nullptr, count = 0.
 DoublyLinkedList::DoublyLinkedList()
+: headPtr{nullptr}, tailPtr{nullptr}, count{0}
 {
-    // TODO: initialize all three fields (use an initializer list)
+    // initialize all three fields (use an initializer list)
 }
 
 /// RAII: delete ALL nodes. Save the next pointer BEFORE delete.
 DoublyLinkedList::~DoublyLinkedList()
 {
     // TODO: walk through the list and delete every node
+    if(headPtr==NULL){
+        return;
+    }
+
+    DoubleNode *curr = headPtr;
+
+    while(curr!=NULL){
+        DoubleNode *next = curr->getNext();
+        delete curr;
+        curr = next;
+    }
+    headPtr = NULL;
+    tailPtr = NULL;
+    count = 0;
+
 }
 
 /// Unlink the first node and RETURN it (do not delete it).
@@ -81,66 +100,159 @@ DoublyLinkedList::~DoublyLinkedList()
 /// Return nullptr if the list is empty.
 DoubleNode *DoublyLinkedList::detachFirst()
 {
-    // TODO: implement
-    return nullptr;
+    if(headPtr==NULL){
+        return NULL;
+    }
+
+    DoubleNode *curr = headPtr;
+    headPtr = curr->getNext();
+    curr->setNext(NULL);
+
+    if(headPtr!=NULL){
+        headPtr->setPrev(NULL);
+    } else {
+        tailPtr = NULL;
+    }
+
+    count--;
+    return curr;
 }
 
 /// Unlink the last node and RETURN it (do not delete it).
 /// Use the tail's prev link. Return nullptr if the list is empty.
 DoubleNode *DoublyLinkedList::detachLast()
 {
-    // TODO: implement
-    return nullptr;
+    if(headPtr==NULL){
+        return NULL;
+    }
+
+    DoubleNode *curr = tailPtr;
+    tailPtr = curr->getPrev();
+    curr->setPrev(NULL);
+
+    if(tailPtr!=NULL){
+        tailPtr->setNext(NULL);
+    } else {
+        headPtr = NULL;
+    }
+    
+    count--;
+    return curr;
 }
 
 /// Find the FIRST node equal to value and unlink it (head, tail, only node
 /// or middle node). Return nullptr if not found. Reuse detachFirst/detachLast.
 DoubleNode *DoublyLinkedList::detachValue(NodeValue value)
 {
-    // TODO: implement
+    DoubleNode *curr = headPtr;
+
+    while(curr!=NULL){
+        if(curr->getValue() == value){
+            if(curr == headPtr){
+                return detachFirst();
+            }
+            if(curr == tailPtr){
+                return detachLast();
+            }
+            //curr->getPrev()->setNext(NULL);
+            //curr->getNext()->setPrev(NULL);
+            curr->getPrev()->setNext(curr->getNext());
+            curr->getNext()->setPrev(curr->getPrev());
+            curr->setPrev(NULL);
+            curr->setNext(NULL);
+            return curr;
+        }
+        curr = curr->getNext();
+    }
+
     return nullptr;
 }
 
 /// Create a node with new and link it in front. Handle the empty list.
 void DoublyLinkedList::pushFrontValue(NodeValue value)
 {
-    // TODO: implement
+    DoubleNode *front = new DoubleNode(value);
+    if (headPtr == NULL){
+        headPtr = front;
+        tailPtr = front;
+        count++;
+        return;
+    }
+    
+    front->setNext(headPtr);
+    headPtr->setPrev(front);
+    headPtr = front;
+    count++;
+    
 }
 
 /// Create a node with new and link it at the end. Handle the empty list.
 void DoublyLinkedList::pushBackValue(NodeValue value)
 {
-    // TODO: implement
+    DoubleNode *back = new DoubleNode(value);
+    if (headPtr == NULL){
+        headPtr = back;
+        tailPtr = back;
+        count++;
+        return;
+    }
+
+    back->setPrev(tailPtr);
+    tailPtr->setNext(back);
+    tailPtr = back;
+    count++;
+
 }
 
 /// Detach the first node, read its value, delete the node, return the value.
 /// Empty list -> std::nullopt.
 std::optional<NodeValue> DoublyLinkedList::popFrontValue()
 {
-    // TODO: implement
-    return std::nullopt;
+     if (headPtr == NULL){
+        return std::nullopt;
+    }
+
+    DoubleNode *detached = detachFirst();
+    NodeValue val = detached->getValue();
+
+    delete detached;
+    //count--;
+    return std::optional<NodeValue>(val);
 }
 
 /// Detach the last node, read its value, delete the node, return the value.
 /// Empty list -> std::nullopt.
 std::optional<NodeValue> DoublyLinkedList::popBackValue()
 {
-    // TODO: implement
-    return std::nullopt;
+    if (headPtr == NULL){
+        return std::nullopt;
+    }
+    
+    DoubleNode *detached = detachLast();
+    NodeValue val = detached->getValue();
+
+    delete detached;
+    //count--;
+    return std::optional<NodeValue>(val);
 }
 
 /// Remove the FIRST node equal to value and free it.
 /// Return true if something was removed.
 bool DoublyLinkedList::deleteValue(NodeValue value)
 {
-    // TODO: implement
-    return false;
+    DoubleNode *y = detachValue(value);
+    if (y == NULL){
+        return false;
+    }
+
+    delete y;
+    return true;
 }
 
 /// Return true if any node holds value.
 bool DoublyLinkedList::containsValue(NodeValue value) const
 {
-    // TODO: implement
+    
     return false;
 }
 
@@ -162,8 +274,7 @@ int DoublyLinkedList::printBackward() const
 /// Return count.
 int DoublyLinkedList::length() const
 {
-    // TODO: implement
-    return 0;
+    return this->count;
 }
 
 // ===== BEGIN PART 3 (do not remove this marker) =====

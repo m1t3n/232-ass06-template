@@ -25,7 +25,7 @@ using NodeValue = std::variant<int, double, std::string>;
 ///
 /// YOUR TASK (in src/code.cpp):
 /// - Constructor: initialize ALL THREE fields using a member initializer list.
-///   'value' gets 'newValue'. A new node has no neighbours, so 'prevPtr'
+///   'value' gets 'newValue'. A new node has no neighbors, so 'prevPtr'
 ///   and 'nextPtr' are nullptr.
 /// - getValue, getPrev, getNext: const getters, return the matching field.
 /// - setPrev, setNext: store the given pointer in the matching field.
