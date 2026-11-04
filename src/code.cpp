@@ -287,6 +287,7 @@ int DoublyLinkedList::length() const
 /// Which std::list method inserts at the front?
 void StdDoublyLinkedList::pushFrontValue(NodeValue value)
 {
+
     // TODO: implement
 }
 
@@ -294,6 +295,7 @@ void StdDoublyLinkedList::pushFrontValue(NodeValue value)
 void StdDoublyLinkedList::pushBackValue(NodeValue value)
 {
     // TODO: implement
+    return;
 }
 
 /// Read the front element, remove it, return it. Empty -> std::nullopt.
