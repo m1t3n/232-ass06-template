@@ -287,35 +287,46 @@ int DoublyLinkedList::length() const
 /// Which std::list method inserts at the front?
 void StdDoublyLinkedList::pushFrontValue(NodeValue value)
 {
-
-    // TODO: implement
+    data.push_front(value);
 }
 
 /// Which std::list method inserts at the back?
 void StdDoublyLinkedList::pushBackValue(NodeValue value)
 {
-    // TODO: implement
-    return;
+    data.push_back(value);
 }
 
 /// Read the front element, remove it, return it. Empty -> std::nullopt.
 std::optional<NodeValue> StdDoublyLinkedList::popFrontValue()
 {
-    // TODO: implement
-    return std::nullopt;
+    if (data.empty()){
+        return std::nullopt;
+    }
+    std::optional<NodeValue> value = data.front();
+    data.pop_front();
+    return value;
 }
 
 /// Read the back element, remove it, return it. Empty -> std::nullopt.
 std::optional<NodeValue> StdDoublyLinkedList::popBackValue()
 {
-    // TODO: implement
-    return std::nullopt;
+    if (data.empty()){
+        return std::nullopt;
+    }
+    std::optional<NodeValue> value = data.back();
+    data.pop_back();
+    return value;
 }
 
 /// Remove only the FIRST element equal to value. Return true if removed.
 bool StdDoublyLinkedList::deleteValue(NodeValue value)
 {
-    // TODO: implement
+    auto it = std::find(data.begin(), data.end(), value);
+
+    if (it != data.end()){
+        data.erase(it);
+        return true;
+    }
     return false;
 }
 
@@ -343,7 +354,6 @@ int StdDoublyLinkedList::printBackward() const
 /// size() returns size_t, length() returns int.
 int StdDoublyLinkedList::length() const
 {
-    // TODO: implement
-    return 0;
+    return int(data.size());
 }
 // ===== END PART 3 (do not remove this marker) =====
